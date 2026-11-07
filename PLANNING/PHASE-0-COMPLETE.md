@@ -23,7 +23,7 @@ Resources created in account `691fe25d377abac03627d6a88d3eeac9`: R2 `agent-runs`
 | Live smoke | PASS 15/15 | `just smoke`, run `smoke_20261107132152626` |
 | R2 object per turn | PASS | `agent-runs/runs/smoke_20261107132152626/smoke_20261107132152626_t1.jsonl`, 5 lines |
 | sGTM relay off, decision recorded per event | PASS | D1 `forwards`: 6 rows `skipped` |
-| CI `PR Gate` on the PR | see PR | guards, gitleaks (full history), workers |
+| CI `PR Gate` on PR #1 | PASS | [run 42376797663](https://github.com/Organized-AI/synter-loop/actions/runs/42376797663): guards, gitleaks (full history), workers |
 
 Test-matrix rows covered here: every event validates against `events.v1.json` (ingest rejects the batch otherwise); capture retry leaves no duplicates; GA4/sGTM payloads carry no prompt or result text; rollups recompute exactly from raw R2 objects.
 
@@ -38,4 +38,5 @@ Test-matrix rows covered here: every event validates against `events.v1.json` (i
 - The `/live` feed is public and metadata only (`FEED_PUBLIC=on`). Set it to `off` if runs should be private; the site would then need a feed token.
 - Synter MCP for Pi does not connect: Keychain item `synter-api-key` is not set. Needed from Phase 2.
 - The landing page was checked over HTTP (status, CSP, GSAP SRI tag, install line), not visually in a browser.
+- CI's first run flagged GitHub's synthetic PR merge commit as a non-Jordan author; the guard now skips merge commits (`--no-merges`).
 - `wrangler` OAuth lacks some optional scopes (it warns); everything Phase 0 needed (Workers, R2, D1) worked.
