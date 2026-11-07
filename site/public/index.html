@@ -4,83 +4,131 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>synter-loop: a closed loop for agent ad spend</title>
-  <meta name="description" content="A Hermes Agent plugin. Before your agent changes ad spend through Synter, it checks caps, tracking and the numbers, asks you, and later grades the change.">
+  <meta name="description" content="A Hermes Agent plugin built on Synter. Before your agent changes ad spend, it checks caps, tracking and the numbers, asks you, and later grades the change.">
+  <meta name="theme-color" content="#0b0e12">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
-  <header class="top">
-    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>synter-loop</a>
-    <nav>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav">
+    <a class="brand" href="/" aria-label="synter-loop home"><img src="/assets/loop-glyph.svg" alt="" width="25" height="25">synter-loop</a>
+    <nav aria-label="Main">
+      <a href="#loop">How it works</a>
+      <a href="#promises">Guarantees</a>
       <a href="/live/">Live runs</a>
       <a href="https://github.com/Organized-AI/synter-loop">GitHub</a>
     </nav>
+    <a class="cta small" href="#install">Install <svg class="arr" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.5v9M2 6.5l4 4 4-4"/></svg></a>
   </header>
 
-  <main>
+  <main id="main">
     <section class="hero">
-      <p class="chip">In development · Hermes Agent Plugin Hackathon</p>
-      <h1>A closed loop for agent ad spend.</h1>
-      <p class="lede">synter-loop is a Hermes Agent plugin for <a href="https://syntermedia.ai">Synter</a>'s cross-platform ad tools. Before your agent changes a budget it checks the caps, the tracking and the numbers, then asks you. Afterwards it grades the change, and the grade teaches the next decision.</p>
-      <div class="install">
-        <code id="install-cmd">hermes plugins install Organized-AI/synter-loop</code>
-        <button type="button" id="copy" aria-label="Copy install command">Copy</button>
+      <div class="hero-copy">
+        <p class="eyebrow lime">In development · Hermes Agent Plugin Hackathon</p>
+        <h1>A closed loop for agent ad spend.</h1>
+        <p class="hero-lede">synter-loop is a Hermes Agent plugin built on Synter. Before your agent changes a budget, it checks the caps, the tracking and the numbers, then asks you. Afterwards it grades the change, and the grade informs the next decision.</p>
+        <div class="install" id="install">
+          <p class="eyebrow">Install</p>
+          <div class="install-line">
+            <code id="install-cmd">hermes plugins install Organized-AI/synter-loop</code>
+            <button type="button" id="copy" class="text-link">Copy</button>
+          </div>
+          <p class="fine">Needs Hermes 0.23.0 or later and a Synter API key. Writes are dry runs until you approve them.</p>
+        </div>
+        <div class="hero-actions">
+          <a class="cta" href="/live/">Watch live runs <svg class="arr" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 9 3M4 3h5v5"/></svg></a>
+          <a class="text-link" href="https://github.com/Organized-AI/synter-loop">Read the code <svg class="arr" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 9 3M4 3h5v5"/></svg></a>
+        </div>
       </div>
-      <p class="fine">Needs Hermes 0.23.0 or later and a Synter API key. Writes are dry runs until you approve them.</p>
+      <div class="hero-bottom">
+        <a class="eyebrow steps-link" href="#loop">Guard / Witness / Truth / ROAS / Jev <span aria-hidden="true">↓</span></a>
+        <a class="built-on" href="https://synterai.com" aria-label="Built on Synter (synterai.com)">
+          <span>Built on</span><img src="/assets/synter-mark.png" alt="" width="25" height="25"><span class="synter-word">SYNTER</span><svg class="arr" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 9 3M4 3h5v5"/></svg>
+        </a>
+      </div>
     </section>
 
-    <section class="loop" aria-labelledby="loop-title">
-      <h2 id="loop-title">The loop</h2>
+    <section class="section dark" id="loop" aria-labelledby="loop-title">
+      <div class="section-head">
+        <p class="eyebrow lime">01 · The loop</p>
+        <h2 id="loop-title">Every write goes around the loop.</h2>
+        <p class="lede">Five stages sit between your agent and your ad accounts. Each one records what it saw, so every decision can be replayed later.</p>
+      </div>
       <div class="loop-grid">
-        <svg id="loop-svg" viewBox="0 0 600 600" role="img" aria-labelledby="loop-svg-title">
-          <title id="loop-svg-title">Spend Guard, Tag Witness, Truth Layer, Agent ROAS and Jev in a loop around Synter MCP; every step is captured.</title>
-          <circle class="capture-ring" cx="300" cy="300" r="272"/>
-          <circle class="ring" cx="300" cy="300" r="210"/>
-          <circle class="ring-progress" id="ring-progress" cx="300" cy="300" r="210" transform="rotate(-90 300 300)"/>
-          <g class="core">
-            <circle cx="300" cy="300" r="92"/>
-            <text x="300" y="292" class="core-title">Synter MCP</text>
-            <text x="300" y="318" class="core-sub">every connected</text>
-            <text x="300" y="336" class="core-sub">ad platform</text>
-          </g>
-          <g id="nodes"></g>
-          <g id="sparks"></g>
-          <circle id="pulse" class="pulse" cx="300" cy="90" r="9"/>
-        </svg>
-        <ol class="stages" id="stages">
-          <li data-stage="0"><strong>Spend Guard</strong> decides. Every Synter write passes caps, a dry run, the tracking gate and Jev's score, then waits for your approval. Unattended runs only propose.</li>
-          <li data-stage="1"><strong>Tag Witness</strong> checks tracking in a real browser: dataLayer pushes and the tags that actually fired.</li>
-          <li data-stage="2"><strong>Truth Layer</strong> checks the numbers. Platform claims sit next to GA4, CAPI and CRM, and wrong figures get a footnote.</li>
-          <li data-stage="3"><strong>Agent ROAS</strong> grades each approved change once enough days have passed.</li>
-          <li data-stage="4"><strong>Jev</strong> learns from the grades through jev-gateway, so the next score is better informed. Jev never approves.</li>
+        <div class="diagram">
+          <svg id="loop-svg" viewBox="0 0 600 600" role="img" aria-labelledby="loop-svg-title">
+            <title id="loop-svg-title">Spend Guard, Tag Witness, Truth Layer, Agent ROAS and Jev in a loop around Synter MCP. Every step is captured.</title>
+            <circle class="capture-ring" cx="300" cy="300" r="272"/>
+            <circle class="ring" cx="300" cy="300" r="210"/>
+            <circle class="ring-progress" id="ring-progress" cx="300" cy="300" r="210" transform="rotate(-90 300 300)"/>
+            <g class="core">
+              <circle cx="300" cy="300" r="92"/>
+              <image href="/assets/synter-mark.png" x="278" y="238" width="44" height="44"/>
+              <text x="300" y="310" class="core-title">Synter MCP</text>
+              <text x="300" y="334" class="core-sub">EVERY CONNECTED</text>
+              <text x="300" y="350" class="core-sub">AD PLATFORM</text>
+            </g>
+            <circle id="pulse" class="pulse" cx="300" cy="90" r="7"/>
+            <g id="nodes"></g>
+            <g id="sparks"></g>
+          </svg>
+          <button type="button" class="motion-toggle" id="motion-toggle" aria-pressed="false">Pause motion <span aria-hidden="true">‖</span></button>
+        </div>
+        <ol class="steps" id="stages">
+          <li><button type="button" data-stage="0"><span class="step-n">01</span><strong>Spend Guard</strong><small>Decides. Every Synter write passes caps, a dry run, the tracking gate and Jev's score, then waits for your approval. Unattended runs only propose.</small></button></li>
+          <li><button type="button" data-stage="1"><span class="step-n">02</span><strong>Tag Witness</strong><small>Checks tracking in a real browser: dataLayer pushes and the tags that actually fired.</small></button></li>
+          <li><button type="button" data-stage="2"><span class="step-n">03</span><strong>Truth Layer</strong><small>Checks the numbers. Platform claims sit next to GA4, CAPI and CRM, and wrong figures get a footnote.</small></button></li>
+          <li><button type="button" data-stage="3"><span class="step-n">04</span><strong>Agent ROAS</strong><small>Grades each approved change once enough days have passed.</small></button></li>
+          <li><button type="button" data-stage="4"><span class="step-n">05</span><strong>Jev</strong><small>Learns from the grades through jev-gateway. Jev scores; it never approves.</small></button></li>
         </ol>
       </div>
       <p class="capture-note"><span class="dot" aria-hidden="true"></span>Agent runtime capture records every prompt, tool call and token. Agent P&amp;L measures the agent like an ad account.</p>
     </section>
 
-    <section class="demo" aria-labelledby="demo-title">
-      <h2 id="demo-title">Demo</h2>
-      <div class="video-wrap" id="video-wrap">
-        <video id="demo-video" controls preload="metadata" playsinline src="/media/demo.mp4">
-          <a href="/media/demo.mp4">Download the demo video</a>
-        </video>
-        <p class="video-placeholder" id="video-placeholder" hidden>The demo video is published with the submission. Until then, watch real runs on the <a href="/live/">live page</a>.</p>
-      </div>
+    <section class="section paper" id="promises" aria-labelledby="promises-title">
+      <p class="eyebrow">02 · Guarantees</p>
+      <h2 id="promises-title">It proposes. You decide.</h2>
+      <ol class="promise-grid">
+        <li><span class="eyebrow">01</span><strong>No self-approval</strong><p>A person approves every write. Jev only scores.</p></li>
+        <li><span class="eyebrow">02</span><strong>Dry run first</strong><p>Nothing spends without a dry-run preview, and nothing goes past your caps.</p></li>
+        <li><span class="eyebrow">03</span><strong>Quiet when unattended</strong><p>Cron runs and propose-only mode record proposals instead of acting.</p></li>
+        <li><span class="eyebrow">04</span><strong>Prompts stay put</strong><p>Capture is off by default. Only metadata ever leaves the capture store; prompts and tool results never reach analytics.</p></li>
+      </ol>
     </section>
 
-    <section class="promises" aria-labelledby="promises-title">
-      <h2 id="promises-title">What it will not do</h2>
-      <ul>
-        <li>Approve its own changes. A person approves every write; Jev only scores.</li>
-        <li>Spend without a dry run first, or past your caps.</li>
-        <li>Act during unattended runs. Cron and propose-only mode record proposals instead.</li>
-        <li>Send prompts or tool results to analytics. Capture is off by default, and only metadata ever leaves the capture store.</li>
-      </ul>
+    <section class="section dark" id="demo" aria-labelledby="demo-title">
+      <div class="section-head">
+        <p class="eyebrow lime">03 · Demo</p>
+        <h2 id="demo-title">One run, end to end.</h2>
+      </div>
+      <div class="video-frame">
+        <div class="video-bar"><span class="eyebrow">synter-loop · demo</span><span class="eyebrow muted" id="video-status">Not yet published</span></div>
+        <video id="demo-video" controls preload="metadata" playsinline data-src="/media/demo.mp4" hidden>
+          <a href="/media/demo.mp4">Download the demo video</a>
+        </video>
+        <p class="video-placeholder" id="video-placeholder">The demo video is published with the submission. Until then, watch real runs on the <a class="text-link" href="/live/">live page</a>.</p>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <p>MIT licensed · <a href="https://github.com/Organized-AI/synter-loop">Organized-AI/synter-loop</a> · Built on Hermes Agent and Synter MCP</p>
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="/"><img src="/assets/loop-glyph.svg" alt="" width="25" height="25">synter-loop</a>
+        <p>A Hermes Agent plugin for safe, measured ad spend.</p>
+      </div>
+      <a class="built-on" href="https://synterai.com" aria-label="Built on Synter (synterai.com)">
+        <span>Built on</span><img src="/assets/synter-mark.png" alt="" width="25" height="25"><span class="synter-word">SYNTER</span><svg class="arr" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 9 3M4 3h5v5"/></svg>
+      </a>
+    </div>
+    <div class="footer-bottom">
+      <span>MIT licensed</span>
+      <a href="https://github.com/Organized-AI/synter-loop">Organized-AI/synter-loop</a>
+      <a href="/live/">Live runs</a>
+      <span>A Hermes Agent plugin that runs on Synter MCP</span>
+    </div>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>

@@ -5,44 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Live runs · synter-loop</title>
   <meta name="description" content="Live metadata from synter-loop runs: turns, model calls, tool calls, gate decisions, tokens and cost.">
+  <meta name="theme-color" content="#0b0e12">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body class="live">
-  <header class="top">
-    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>synter-loop</a>
-    <nav>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav">
+    <a class="brand" href="/" aria-label="synter-loop home"><img src="/assets/loop-glyph.svg" alt="" width="25" height="25">synter-loop</a>
+    <nav aria-label="Main">
+      <a href="/#loop">How it works</a>
       <a href="/live/" aria-current="page">Live runs</a>
       <a href="https://github.com/Organized-AI/synter-loop">GitHub</a>
     </nav>
+    <a class="cta small" href="/#install">Install <svg class="arr" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 9 3M4 3h5v5"/></svg></a>
   </header>
 
-  <main class="live-main">
+  <main id="main" class="live-main">
     <div class="live-head">
-      <h1>Live runs</h1>
-      <p class="conn" id="conn" role="status"><span class="dot" aria-hidden="true"></span><span id="conn-text">Connecting…</span></p>
+      <div>
+        <p class="eyebrow lime">Live · metadata only</p>
+        <h1>Live runs</h1>
+      </div>
+      <p class="conn" id="conn" role="status"><span class="dot" aria-hidden="true"></span><span id="conn-text">Connecting</span></p>
     </div>
-    <p class="fine">Metadata only: IDs, models, tool names, statuses, tokens, cost and gate decisions. Prompts and tool results never leave the capture store.</p>
+    <p class="live-note">IDs, models, tool names, statuses, tokens, cost and gate decisions. Prompts and tool results never leave the capture store.</p>
 
     <div class="live-grid">
-      <aside aria-labelledby="runs-title">
-        <h2 id="runs-title">Runs</h2>
-        <button type="button" class="run-all active" id="run-all">All runs</button>
-        <ul id="runs" class="runs"></ul>
+      <aside class="runs-panel" aria-labelledby="runs-title">
+        <h2 class="eyebrow" id="runs-title">Runs</h2>
+        <ul class="runs" id="runs-list">
+          <li><button type="button" class="run active" id="run-all" aria-pressed="true"><strong>All runs</strong></button></li>
+        </ul>
         <p class="empty" id="runs-empty" hidden>No runs yet.</p>
       </aside>
-      <section aria-labelledby="events-title">
-        <h2 id="events-title">Events <span class="muted" id="filter-label"></span></h2>
-        <div class="table-wrap">
-          <table class="events">
-            <thead><tr><th scope="col">Time</th><th scope="col">Event</th><th scope="col">Run / turn</th><th scope="col">Detail</th><th scope="col" class="num">Tokens</th><th scope="col" class="num">Cost</th></tr></thead>
-            <tbody id="events"></tbody>
-          </table>
+      <section class="events-panel" aria-labelledby="events-title">
+        <div class="panel-head">
+          <h2 class="eyebrow" id="events-title">Events <span id="filter-label"></span></h2>
+          <span class="eyebrow muted" id="event-count"></span>
         </div>
+        <table class="events">
+          <thead><tr><th scope="col">Time</th><th scope="col">Event</th><th scope="col">Run / turn</th><th scope="col">Detail</th><th scope="col" class="num">Tokens</th><th scope="col" class="num">Cost</th></tr></thead>
+          <tbody id="events"></tbody>
+        </table>
         <p class="empty" id="events-empty">No events yet. They appear here as soon as a Hermes session with capture on sends its first event.</p>
       </section>
     </div>
   </main>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="/"><img src="/assets/loop-glyph.svg" alt="" width="25" height="25">synter-loop</a>
+        <p>A Hermes Agent plugin for safe, measured ad spend.</p>
+      </div>
+      <a class="built-on" href="https://synterai.com" aria-label="Built on Synter (synterai.com)">
+        <span>Built on</span><img src="/assets/synter-mark.png" alt="" width="25" height="25"><span class="synter-word">SYNTER</span><svg class="arr" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 9 3M4 3h5v5"/></svg>
+      </a>
+    </div>
+  </footer>
 
   <script src="/assets/live.js" defer></script>
 </body>

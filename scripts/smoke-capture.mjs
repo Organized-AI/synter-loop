@@ -75,6 +75,10 @@ if (site) {
   const html = await home.text();
   check("site / serves the landing page", home.ok && html.includes("gsap/3.12.5/gsap.min.js") && html.includes("hermes plugins install"), `status ${home.status}`);
   check("site sends a CSP", (home.headers.get("content-security-policy") ?? "").includes("script-src 'self' https://cdnjs.cloudflare.com"));
+  check("site loads Synter brand fonts from /assets/fonts", html.includes("/assets/fonts/inter-latin-wght-normal.woff2") && !/fonts\.googleapis|fonts\.gstatic/.test(html));
+  const fontFiles = ["inter-latin-wght-normal", "ibm-plex-mono-latin-400-normal", "space-grotesk-latin-500-normal"];
+  const fontRes = await Promise.all(fontFiles.map((f) => fetch(new URL(`/assets/fonts/${f}.woff2`, site))));
+  check("self-hosted woff2 fonts are served", fontRes.every((r) => r.ok && (r.headers.get("content-type") ?? "").includes("font/woff2")), fontRes.map((r) => r.status).join(","));
   const live = await fetch(new URL("/live/", site));
   check("site /live/ serves the run view", live.ok && (await live.text()).includes("/assets/live.js"), `status ${live.status}`);
   const proxied = await (await fetch(new URL(`/live/api/runs/${runId}`, site))).json();
