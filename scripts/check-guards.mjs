@@ -74,7 +74,8 @@ const base = process.env.GUARDS_BASE ?? (() => {
 })();
 if (base) {
   const range = `${base}..HEAD`;
-  const log = git("log", "--format=%H%x1f%an <%ae>%x1f%B%x1e", range);
+  // --no-merges: a pull_request checkout is GitHub's synthetic merge commit, not one of ours.
+  const log = git("log", "--no-merges", "--format=%H%x1f%an <%ae>%x1f%B%x1e", range);
   for (const entry of log.split("\x1e").map((s) => s.trim()).filter(Boolean)) {
     const [sha, author, body] = entry.split("\x1f");
     for (const re of ATTRIBUTION) if (re.test(body ?? "")) fail("rule 1", `commit ${sha.slice(0, 7)} message contains AI attribution`);
