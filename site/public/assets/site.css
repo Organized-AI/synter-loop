@@ -168,7 +168,7 @@ img, video { display: block; max-width: 100%; }
 .section-head h2 { margin: 24px 0 22px; }
 
 /* Loop */
-.loop-grid { display: grid; grid-template-columns: minmax(300px, 1.05fr) minmax(300px, 1fr); gap: clamp(32px, 5vw, 88px); align-items: center; }
+.loop-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(300px, 1fr); gap: clamp(32px, 4vw, 72px); align-items: start; }
 .diagram { position: relative; }
 #loop-svg { width: 100%; height: auto; max-width: 620px; display: block; margin: 0 auto; }
 .ring { fill: none; stroke: var(--dark-line); stroke-width: 2; stroke-dasharray: 4 10; }
@@ -182,7 +182,7 @@ img, video { display: block; max-width: 100%; }
 .node.active circle { stroke: var(--lime); fill: var(--dark-active); }
 .node.active text { fill: var(--white); }
 .pulse, .spark { fill: var(--lime); }
-.motion-toggle { position: absolute; right: 0; bottom: 0; font-size: 13px; color: var(--white); padding: 6px 0; border-bottom: 1px solid currentColor; }
+.motion-toggle { font-size: 14px; color: var(--white); padding: 7px 0; border-bottom: 1px solid currentColor; }
 .motion-toggle:hover { color: var(--lime); }
 .motion-toggle[hidden] { display: none; }
 
@@ -198,6 +198,53 @@ img, video { display: block; max-width: 100%; }
 .steps small { grid-column: 2; font-size: 14px; line-height: 1.5; }
 .steps button.active { background: var(--dark-active); box-shadow: inset 0 3px var(--lime); color: var(--white); }
 .steps button.active .step-n { color: var(--lime); }
+/* Loop in 3D: the model fills a rounded stage; labels are HTML pinned to 3D points (as in Judy's Courthouse). */
+.loop3d { min-width: 0; }
+.stage3d {
+  position: relative; width: 100%; aspect-ratio: 1 / 1; max-height: 86vh; overflow: hidden;
+  border: 1px solid var(--dark-line); border-radius: 22px;
+  background: radial-gradient(ellipse 70% 62% at 50% 46%, #142225 0%, var(--dark-panel) 46%, var(--carbon) 100%);
+}
+.stage3d canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+.stage3d canvas:active { cursor: grabbing; }
+.stage3d[data-hover] canvas { cursor: pointer; }
+.loop-flat { position: absolute; inset: 7%; width: 86%; height: 86%; }
+.stage3d[data-mode="3d"] .loop-flat { display: none; }
+.stage3d[data-mode="flat"] .hint3d, .stage3d[data-mode="flat"] .counter3d { display: none; }
+.labels3d { position: absolute; inset: 0; pointer-events: none; }
+.stage3d, .tag3d { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+.tag3d {
+  position: absolute; left: 0; top: 0; transform: translate(-50%, calc(-100% - 6px));
+  display: inline-flex; align-items: baseline; gap: 8px; padding: 6px 10px;
+  background: var(--dark-panel); border: 1px solid var(--dark-line); color: var(--white);
+  font: 500 13px/1.2 var(--sans); letter-spacing: -.01em; white-space: nowrap; pointer-events: auto;
+  transition: background .4s ease, color .4s ease, border-color .4s ease;
+}
+.tag3d .n { font: 400 10px/1 var(--mono); letter-spacing: .08em; color: var(--lime); }
+.tag3d:hover { border-color: var(--lime); }
+.tag3d-quiet { background: transparent; border-color: transparent; color: var(--dark-muted); font: 400 10px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.tag3d[data-on] { background: var(--lime); border-color: var(--lime); color: var(--carbon); }
+.tag3d[data-on] .n { color: var(--carbon); }
+.hint3d { position: absolute; left: 18px; top: 16px; font: 400 11px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dark-muted); pointer-events: none; }
+.counter3d {
+  position: absolute; left: 16px; right: 16px; bottom: 16px; width: fit-content; max-width: calc(100% - 32px);
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+  background: color-mix(in srgb, var(--carbon) 86%, transparent); border: 1px solid var(--dark-line);
+  font: 400 12px/1.45 var(--mono); color: var(--white); pointer-events: none;
+}
+.counter3d::before { content: ""; width: 7px; height: 7px; background: var(--lime); flex: none; }
+.counter3d:empty { display: none; }
+.stage-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 20px; }
+.stage-bar .text-link { font-size: 14px; }
+.stage-bar .arr path { fill: currentColor; stroke: none; }
+.stage-note { margin-left: auto; }
+.loop-side { display: grid; gap: 20px; min-width: 0; }
+.detail3d { border: 1px solid var(--dark-line); border-radius: 16px; background: var(--dark-panel); padding: 22px 24px; }
+.detail3d h3 { margin: 10px 0 10px; font-size: 24px; font-weight: 400; letter-spacing: -.03em; line-height: 1.2; }
+.detail3d p { color: var(--dark-muted); font-size: 15px; line-height: 1.55; }
+.detail3d .eyebrow { color: var(--lime); }
+.detail3d .detail-where { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--dark-line); font: 400 12px/1.6 var(--mono); color: var(--white); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .capture-note { display: flex; gap: 12px; align-items: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--dark-line); color: var(--dark-muted); font-size: 15px; }
 .dot { display: inline-block; width: 8px; height: 8px; background: var(--lime); flex: none; }
 
@@ -295,6 +342,12 @@ table.events { width: 100%; border-collapse: collapse; border: 1px solid var(--d
   .install-line { flex-direction: column; align-items: stretch; gap: 12px; }
   .install-line code { white-space: normal; overflow-wrap: anywhere; }
   .node text { font-size: 21px; }
+  .stage3d { aspect-ratio: 1 / 1; border-radius: 16px; }
+  .tag3d { font-size: 11.5px; padding: 4px 7px; gap: 6px; }
+  .tag3d-quiet { display: none; }
+  .hint3d { display: none; }
+  .counter3d { font-size: 11px; left: 10px; right: 10px; bottom: 10px; max-width: calc(100% - 20px); }
+  .stage-note { margin-left: 0; flex-basis: 100%; }
   .core-title { font-size: 26px; }
   .core-sub { font-size: 13px; }
   .install-line .text-link { align-self: flex-start; }
@@ -302,7 +355,6 @@ table.events { width: 100%; border-collapse: collapse; border: 1px solid var(--d
   .hero-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
   .promise-grid { grid-template-columns: 1fr; gap: 24px; }
   .footer-top { flex-direction: column; }
-  .motion-toggle { position: static; display: inline-block; margin-top: 12px; }
   .demo-head { flex-direction: column; align-items: flex-start; gap: 20px; }
   .videocard { border-radius: 16px; }
   .sound-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 12px; gap: 6px; }
