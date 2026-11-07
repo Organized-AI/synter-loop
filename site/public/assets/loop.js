@@ -43,6 +43,9 @@
     core: { n: "", name: "Synter MCP", role: "The hub",
       body: "Synter's hosted MCP: one connection to every connected ad platform. Every stage reads through it, and writes reach it only through Spend Guard.",
       where: "Endpoint mcp.syntermedia.ai" },
+    hermes: { n: "", name: "Hermes", role: "Your agent",
+      body: "Hermes Agent, carrying one spend change around the loop. synter-loop is a Hermes plugin: every Synter write Hermes proposes stops at Spend Guard, waits for you, and is graded later.",
+      where: "Runs on Hermes Agent 0.23.0 or later" },
     capture: { n: "", name: "Capture ring", role: "Records every step",
       body: "Agent runtime capture records every prompt, tool call and token. It is off by default; raw runs stay in your own R2 bucket and only metadata milestones go to server-side GTM. Agent P&L turns them into cost per approved change.",
       where: "Runs in the agent-capture Worker (R2 agent-runs, D1 agent_runs)" },
@@ -322,6 +325,7 @@
       return { g, edge, ring, hit, spoke, a, deg };
     });
     const hitVolumes = stations.map((s) => s.hit).concat([coreHit]);
+    // (the Hermes coin joins hitVolumes once it exists, below)
 
     // 01 Spend Guard: a barrier gate, a lamp, a caps sign
     const sg = stations[0], sgE = sg.edge;
@@ -399,16 +403,56 @@
     jevRing.rotation.x = 1.15;
     const jevCard = plate(2.8, 0.9, 448, jv.g, V(0, P + 5.1, 0));
 
-    // ---------- the token, sparks, calls ----------
+    // ---------- the token: a Hermes coin carrying the change around the loop ----------
+    // The face is the Hermes mark multiplied onto lime; the coin turns to face the camera every frame
+    // and flips once (coinSpin) when it reaches a stage.
+    const TOKEN_R = 1.15, TOKEN_Y = 1.35;
     const token = new THREE.Group();
-    const tokenBody = put(new THREE.Mesh(new THREE.CapsuleGeometry(0.3, 0.8, 4, 12), mats.glow), token);
-    tokenBody.rotation.z = Math.PI / 2;
-    token.position.y = 0.55;
+    token.position.y = TOKEN_Y;
     root.add(token);
+    const coinCanvas = document.createElement("canvas");
+    coinCanvas.width = coinCanvas.height = 512;
+    const coinTex = new THREE.CanvasTexture(coinCanvas);
+    coinTex.encoding = THREE.sRGBEncoding;
+    coinTex.anisotropy = 8;
+    const hermesMark = new Image();
+    hermesMark.src = "/assets/hermes-mark.png";
+    function drawCoin() {
+      const ctx = coinCanvas.getContext("2d"), W = coinCanvas.width, r = W / 2;
+      ctx.fillStyle = C.carbon;
+      ctx.fillRect(0, 0, W, W);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(r, r, r - 16, 0, TAU);
+      ctx.fillStyle = C.lime;
+      ctx.fill();
+      // no clip(): in Chrome a clip plus "multiply" drops the image; ink outside the disc lands on carbon anyway
+      if (hermesMark.complete && hermesMark.naturalWidth) {
+        ctx.globalCompositeOperation = "multiply"; // black ink stays black, white turns lime
+        ctx.imageSmoothingQuality = "high";
+        const sz = W * 0.84;
+        ctx.drawImage(hermesMark, (W - sz) / 2, W * 0.13, sz, sz);
+      }
+      ctx.restore();
+      coinTex.needsUpdate = true;
+    }
+    hermesMark.onload = drawCoin;
+    drawCoin();
+    const coinMat = new THREE.MeshBasicMaterial({ map: coinTex, toneMapped: false });
+    const coinFront = put(new THREE.Mesh(new THREE.CircleGeometry(TOKEN_R, 56), coinMat), token);
+    coinFront.position.z = 0.081;
+    const coinBack = put(new THREE.Mesh(new THREE.CircleGeometry(TOKEN_R, 56), coinMat), token);
+    coinBack.rotation.y = Math.PI;
+    coinBack.position.z = -0.081;
+    const coinRim = put(new THREE.Mesh(new THREE.CylinderGeometry(TOKEN_R, TOKEN_R, 0.16, 56, 1, true), mats.glow), token);
+    coinRim.rotation.x = Math.PI / 2;
+    coinFront.userData.key = coinBack.userData.key = "hermes";
+    const coinSpin = { a: 0 };
+    hitVolumes.push(coinFront, coinBack);
+    const hermesAnchor = new THREE.Vector3();
     function placeToken(deg) {
       const a = rad(deg);
-      token.position.set(TR * Math.cos(a), 0.55, TR * Math.sin(a));
-      token.rotation.y = -(a + Math.PI / 2);
+      token.position.set(TR * Math.cos(a), TOKEN_Y, TR * Math.sin(a));
       setProgress((deg - ANG[0]) / 360);
     }
     const sparks = Array.from({ length: 6 }, () => {
@@ -562,11 +606,11 @@
     const labelsEl = $("labels3d");
     const counterEl = $("counter3d");
     const LABELS = STATIONS.map((s, i) => ({ key: i, n: s.n, name: s.name, at: stations[i].g.position.clone().setY([5.6, 4.7, 6.5, 4.2, 6.4][i]) }))
-      .concat([{ key: "capture", n: "", name: "Capture ring", at: V(CAP_R * Math.cos(rad(90)), 0.4, CAP_R * Math.sin(rad(90))) }]);
+      .concat([{ key: "hermes", n: "", name: "Hermes", at: hermesAnchor, below: true }, { key: "capture", n: "", name: "Capture ring", at: V(CAP_R * Math.cos(rad(60)), 0.4, CAP_R * Math.sin(rad(60))) }]);
     LABELS.forEach((L) => {
       const el = document.createElement("button");
       el.type = "button";
-      el.className = "tag3d" + (typeof L.key === "number" ? "" : " tag3d-quiet");
+      el.className = "tag3d" + (typeof L.key === "number" ? "" : " tag3d-quiet") + (L.below ? " tag3d-below" : "");
       el.tabIndex = -1; // keyboard users have the step list; these duplicate it for pointers
       el.setAttribute("aria-hidden", "true");
       if (L.n) { const n = document.createElement("span"); n.className = "n"; n.textContent = L.n; el.appendChild(n); }
@@ -720,6 +764,7 @@
       at(tl, () => { select(k); view(k === 0 ? "home" : k); }, ">+0.5");
       const p = { d: ANG[to - 1] };
       tl.to(p, { d: ANG[to], duration: 2.0, ease: "sine.inOut", onUpdate: () => placeToken(p.d) }, "<");
+      tl.fromTo(coinSpin, { a: 0 }, { a: TAU, duration: 0.8, ease: "power2.inOut" }, "<+1.4");
     }
     function runTimeline() {
       const tl = gsap.timeline({ defaults: { ease: "sine.inOut" } });
@@ -846,6 +891,10 @@
         jevRing.rotation.z += dt * jevSpin;
         if (!running) eye.position.y = P + 3.05 + Math.sin(now / 1100) * 0.08;
       }
+      // the coin faces the camera (plus its arrival flip) and floats a little
+      token.rotation.y = Math.atan2(camera.position.x - token.position.x, camera.position.z - token.position.z) + coinSpin.a;
+      token.position.y = TOKEN_Y + (moving ? Math.sin(now / 900) * 0.07 : 0);
+      hermesAnchor.copy(token.position).setY(token.position.y - TOKEN_R - 0.2); // the tag sits under the coin
       renderer.render(scene, camera);
       placeLabels();
       if (visible && !document.hidden) raf = requestAnimationFrame(frame);

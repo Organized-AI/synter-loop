@@ -224,6 +224,7 @@ img, video { display: block; max-width: 100%; }
 .tag3d:hover { border-color: var(--lime); }
 .tag3d-quiet { background: transparent; border-color: transparent; color: var(--dark-muted); font: 400 10px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
 .tag3d[data-on] { background: var(--lime); border-color: var(--lime); color: var(--carbon); }
+.tag3d.tag3d-below { transform: translate(-50%, 6px); }
 .tag3d[data-on] .n { color: var(--carbon); }
 .hint3d { position: absolute; left: 18px; top: 16px; font: 400 11px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dark-muted); pointer-events: none; }
 .counter3d {
