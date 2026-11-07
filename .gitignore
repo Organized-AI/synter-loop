@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+.venv*/
+.hermes-src/
+.hermes-dev/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+.wrangler/
+.dev.vars
+*.outbox.jsonl
+captures/
+.DS_Store

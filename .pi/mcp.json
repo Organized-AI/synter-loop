@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "synter": {
+      "url": "https://mcp.syntermedia.ai/mcp/",
+      "headers": {
+        "X-Synter-Key": "!security find-generic-password -ws synter-api-key"
+      },
+      "description": "Synter ad platform tools, read-only in this project: tool metadata, performance, attribution, tracking health",
+      "exposure": "hidden",
+      "toolExposure": {
+        "search_actions": "direct",
+        "get_connection_status": "direct",
+        "get_plugin_info": "direct",
+        "get_*": "deferred",
+        "list_*": "deferred",
+        "pull_*_performance": "deferred",
+        "ga4_get_*": "deferred",
+        "gtm_get_resources": "deferred",
+        "run_gaql_query": "deferred",
+        "angstrom_verify_output": "deferred",
+        "measure_incrementality": "deferred"
+      }
+    }
+  }
+}
