@@ -1,0 +1,14 @@
+// synter-loop site: static landing page and /live run view. /live/api/* reaches agent-capture
+// through a service binding (no CORS, no token in the browser); /media/* streams from R2.
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "synter-loop",
+  "account_id": "691fe25d377abac03627d6a88d3eeac9",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-15",
+  "workers_dev": true,
+  "assets": { "directory": "./public", "binding": "ASSETS", "html_handling": "auto-trailing-slash", "not_found_handling": "none" },
+  "services": [{ "binding": "CAPTURE", "service": "agent-capture" }],
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "synter-loop-media" }],
+  "observability": { "enabled": true }
+}

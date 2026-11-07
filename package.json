@@ -1,0 +1,32 @@
+{
+  "name": "synter-loop-workers",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Workers for synter-loop: the site (landing page, /live) and agent-capture (run capture, D1 index, sGTM relay, live feed).",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "guards": "node scripts/check-guards.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run -c capture/vitest.config.ts && vitest run -c site/vitest.config.ts",
+    "build": "wrangler deploy --dry-run -c capture/wrangler.jsonc --outdir .wrangler/dry/capture && wrangler deploy --dry-run -c site/wrangler.jsonc --outdir .wrangler/dry/site",
+    "verify": "npm run guards && npm run typecheck && npm test && npm run build",
+    "d1:migrate": "wrangler d1 migrations apply agent_runs --remote -c capture/wrangler.jsonc",
+    "deploy:capture": "wrangler deploy -c capture/wrangler.jsonc",
+    "deploy:site": "wrangler deploy -c site/wrangler.jsonc",
+    "smoke": "node scripts/smoke-capture.mjs"
+  },
+  "dependencies": {
+    "@cfworker/json-schema": "4.1.1"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "0.22.0",
+    "@cloudflare/workers-types": "5.20260928.1",
+    "@vitest/runner": "4.1.11",
+    "@vitest/snapshot": "4.1.11",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11",
+    "wrangler": "4.142.0"
+  }
+}

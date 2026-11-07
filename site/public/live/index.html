@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live runs · synter-loop</title>
+  <meta name="description" content="Live metadata from synter-loop runs: turns, model calls, tool calls, gate decisions, tokens and cost.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body class="live">
+  <header class="top">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>synter-loop</a>
+    <nav>
+      <a href="/live/" aria-current="page">Live runs</a>
+      <a href="https://github.com/Organized-AI/synter-loop">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="live-main">
+    <div class="live-head">
+      <h1>Live runs</h1>
+      <p class="conn" id="conn" role="status"><span class="dot" aria-hidden="true"></span><span id="conn-text">Connecting…</span></p>
+    </div>
+    <p class="fine">Metadata only: IDs, models, tool names, statuses, tokens, cost and gate decisions. Prompts and tool results never leave the capture store.</p>
+
+    <div class="live-grid">
+      <aside aria-labelledby="runs-title">
+        <h2 id="runs-title">Runs</h2>
+        <button type="button" class="run-all active" id="run-all">All runs</button>
+        <ul id="runs" class="runs"></ul>
+        <p class="empty" id="runs-empty" hidden>No runs yet.</p>
+      </aside>
+      <section aria-labelledby="events-title">
+        <h2 id="events-title">Events <span class="muted" id="filter-label"></span></h2>
+        <div class="table-wrap">
+          <table class="events">
+            <thead><tr><th scope="col">Time</th><th scope="col">Event</th><th scope="col">Run / turn</th><th scope="col">Detail</th><th scope="col" class="num">Tokens</th><th scope="col" class="num">Cost</th></tr></thead>
+            <tbody id="events"></tbody>
+          </table>
+        </div>
+        <p class="empty" id="events-empty">No events yet. They appear here as soon as a Hermes session with capture on sends its first event.</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="/assets/live.js" defer></script>
+</body>
+</html>
