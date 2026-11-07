@@ -23,21 +23,6 @@
     });
   }
 
-  // Demo video: the placeholder shows until the file exists in R2, then the player replaces it.
-  var video = document.getElementById("demo-video");
-  if (video) {
-    fetch(video.dataset.src, { method: "HEAD" }).then(function (r) {
-      if (r.ok) {
-        video.src = video.dataset.src;
-        video.hidden = false;
-        document.getElementById("video-placeholder").hidden = true;
-        var status = document.getElementById("video-status");
-        status.textContent = "Recorded run";
-        status.className = "eyebrow lime";
-      }
-    }).catch(function () {});
-  }
-
   var nodesG = document.getElementById("nodes");
   if (!nodesG) return;
   var nodes = names.map(function (n, i) {

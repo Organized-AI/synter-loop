@@ -7,7 +7,7 @@ Branch `phase-0-cloudflare`. Gate reached; waiting for Jordan.
 | Worker | URL | Version |
 |---|---|---|
 | `agent-capture` | https://agent-capture.jordan-691.workers.dev | `23abab5c-abf5-4366-8f3f-fd750a2c5ef5` |
-| `synter-loop` (site) | https://synter-loop.jordan-691.workers.dev | `c5ef7e13-e642-4661-b803-4f7c2f045d44` (Synter rebrand; first deploy was `dd2998b8`) |
+| `synter-loop` (site) | https://synter-loop.jordan-691.workers.dev | `a63d8ed7-3622-4f52-ba5d-6e0b174329cb` (explainer embed; rebrand was `c5ef7e13`, first deploy `dd2998b8`) |
 
 Resources created in account `691fe25d377abac03627d6a88d3eeac9`: R2 `agent-runs`, R2 `synter-loop-media`, D1 `agent_runs` (`11f00ae9-c452-422e-97a4-91e23121b163`, migration `0001_agent_runs.sql` applied), Worker secret `CAPTURE_TOKEN`.
 
@@ -43,9 +43,24 @@ Spec: [`docs/brand/synter-brand.md`](../docs/brand/synter-brand.md). Applied to 
 | site tests | PASS 5/5 |
 | Live smoke (adds two font checks) | PASS 17/17, run `smoke_20261107140131047` |
 | Fonts loaded in Chrome (all four views) | Inter, IBM Plex Mono, Space Grotesk |
-| Console errors | none on /live; on / only the expected `HEAD /media/demo.mp4` 404 until the demo is uploaded |
+| Console errors | none on /live; on / only the expected `HEAD /media/demo.mp4` 404 before the explainer was uploaded (gone since) |
 
 Screenshots (Chrome, 1440x900 and 390x844 @2x): [home desktop](screenshots/brand-home-desktop.png), [home phone](screenshots/brand-home-phone.png), [live desktop](screenshots/brand-live-desktop.png), [live phone](screenshots/brand-live-phone.png).
+
+## Explainer video embedded (before Phase 1)
+
+The Demo section now plays the 71 s explainer from R2 (`/media/demo.mp4`, 1920x1080 H.264 + AAC, voiceover with captions on screen; poster `/media/demo-poster.jpg`). It is an explainer with illustrative figures, not a captured run, and the page says so: label "03 · How it works", heading "The loop in 71 seconds.", and one line that the real-run demo comes with the Phase 12 submission. Source to rebuild it is in [`video/`](../video/README.md) (`scenes.html`, `render.cjs`, `vo/*.aiff`); render outputs are gitignored.
+
+- Player: `figure.videocard` (carbon, 1px dark-line border, 22px radius), square lime "Sound on" toggle (`aria-pressed` mirrors sound) over the top-right corner, mono uppercase figcaption, tags "71 sec · Voiceover · Captions on screen".
+- `assets/demo-video.js`: muted autoplay once 55% is in view (IntersectionObserver), pause when it leaves, no autoplay under `prefers-reduced-motion` or after the viewer pauses it; dataLayer `video_start`, `video_progress` (25/50/75), `video_complete` with `video_title` "synter-loop explainer (71s)"; a fallback message if the file fails to load. The old HEAD-check placeholder is gone.
+
+| Check | Result |
+|---|---|
+| site tests | PASS 5/5 |
+| Player behaviour in Chrome (Playwright) | PASS 17/17: no play off screen; muted autoplay in view (desktop and phone); events start, 25, 50, 75, complete once each; Sound on toggles `muted` and `aria-pressed`; pauses out of view and resumes; stays paused after a viewer pause; no autoplay or events under reduced motion; card and button styles match the tokens; no page errors |
+| Live smoke | PASS 21/21 (adds demo mp4, byte ranges, poster, embed), run `smoke_20261107142008641` |
+
+Screenshots of the Demo section: [1440x900](screenshots/demo-desktop.png), [390x844](screenshots/demo-phone.png).
 
 ## Decisions
 
@@ -54,7 +69,7 @@ Screenshots (Chrome, 1440x900 and 390x844 @2x): [home desktop](screenshots/brand
 
 ## Not done / follow-ups
 
-- Demo video: `/media/demo.mp4` returns 404 and the page shows a placeholder until Phase 12 uploads it.
+- The real-run demo (a captured Hermes session) replaces or joins the explainer in Phase 12.
 - The `/live` feed is public and metadata only (`FEED_PUBLIC=on`). Set it to `off` if runs should be private; the site would then need a feed token.
 - Synter MCP for Pi does not connect: Keychain item `synter-api-key` is not set. Needed from Phase 2.
 - The landing page was checked over HTTP (status, CSP, GSAP SRI tag, install line), not visually in a browser.

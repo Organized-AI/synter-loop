@@ -86,7 +86,12 @@ if (site) {
   const stream = await (await fetch(new URL("/live/api/stream?duration_ms=0", site))).text();
   check("site /live/api/stream is SSE with the run", stream.includes("event: agent_event") && stream.includes(runId));
   const media = await fetch(new URL("/media/demo.mp4", site), { method: "HEAD" });
-  check("site /media answers (404 until the demo is uploaded)", media.status === 404 || media.status === 200, `status ${media.status}`);
+  check("site /media/demo.mp4 is served as video/mp4", media.ok && media.headers.get("content-type") === "video/mp4", `status ${media.status}`);
+  const range = await fetch(new URL("/media/demo.mp4", site), { headers: { range: "bytes=0-1023" } });
+  check("demo video supports byte ranges", range.status === 206 && (await range.arrayBuffer()).byteLength === 1024, `status ${range.status}`);
+  const poster = await fetch(new URL("/media/demo-poster.jpg", site), { method: "HEAD" });
+  check("demo poster is served", poster.ok && poster.headers.get("content-type") === "image/jpeg", `status ${poster.status}`);
+  check("landing page embeds the explainer", html.includes('id="demo-video"') && html.includes('poster="/media/demo-poster.jpg"') && html.includes("/assets/demo-video.js"));
 }
 
 console.log(`\nrun_id ${runId}`);

@@ -1,0 +1,1 @@
+Source for the 71 s explainer at `/media/demo.mp4`: `node video/render.cjs` renders `scenes.html` frame by frame in Chrome (Playwright), muxes the `vo/*.aiff` voiceover with ffmpeg, and writes `demo.mp4` and `poster.jpg` here (gitignored) for upload to R2 `synter-loop-media` as `demo.mp4` and `demo-poster.jpg`.
