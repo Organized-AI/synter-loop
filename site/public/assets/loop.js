@@ -424,11 +424,11 @@
       ctx.save();
       ctx.beginPath();
       ctx.arc(r, r, r - 16, 0, TAU);
-      ctx.fillStyle = C.lime;
+      ctx.fillStyle = C.white;
       ctx.fill();
       // no clip(): in Chrome a clip plus "multiply" drops the image; ink outside the disc lands on carbon anyway
       if (hermesMark.complete && hermesMark.naturalWidth) {
-        ctx.globalCompositeOperation = "multiply"; // black ink stays black, white turns lime
+        ctx.globalCompositeOperation = "multiply"; // black ink stays black, the white paper takes the coin colour
         ctx.imageSmoothingQuality = "high";
         const sz = W * 0.84;
         ctx.drawImage(hermesMark, (W - sz) / 2, W * 0.13, sz, sz);
@@ -444,7 +444,7 @@
     const coinBack = put(new THREE.Mesh(new THREE.CircleGeometry(TOKEN_R, 56), coinMat), token);
     coinBack.rotation.y = Math.PI;
     coinBack.position.z = -0.081;
-    const coinRim = put(new THREE.Mesh(new THREE.CylinderGeometry(TOKEN_R, TOKEN_R, 0.16, 56, 1, true), mats.glow), token);
+    const coinRim = put(new THREE.Mesh(new THREE.CylinderGeometry(TOKEN_R, TOKEN_R, 0.16, 56, 1, true), new THREE.MeshBasicMaterial({ color: C.white, toneMapped: false })), token);
     coinRim.rotation.x = Math.PI / 2;
     coinFront.userData.key = coinBack.userData.key = "hermes";
     const coinSpin = { a: 0 };
