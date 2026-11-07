@@ -7,7 +7,7 @@
   if (!video) return;
   var toggle = document.getElementById("sound-toggle");
   var fallback = document.getElementById("video-fallback");
-  var TITLE = "synter-loop explainer (71s)";
+  var TITLE = "synter-loop explainer (77s)";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // --- dataLayer events (video_start, video_progress 25/50/75, video_complete) ---
