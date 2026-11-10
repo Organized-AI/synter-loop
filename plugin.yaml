@@ -1,0 +1,66 @@
+name: synter-loop
+version: 0.1.0
+description: Local-first, evidence-gated Synter ad operations with spend controls, reconciliation, tracking QA, and replayable agent telemetry.
+requires_hermes: ">=0.23.0"
+license: MIT
+homepage: https://github.com/Organized-AI/synter-loop
+requires_env:
+  - name: SYNTER_API_KEY
+    description: Synter MCP API key; only used for read-only MCP requests in this build.
+    url: https://syntermedia.ai/
+    secret: true
+  - name: SYNTER_JEV_GATEWAY_TOKEN
+    description: Optional Jev gateway token.
+    secret: true
+  - name: SYNTER_CAPTURE_TOKEN
+    description: Optional capture Worker bearer token.
+    secret: true
+  - name: KERNEL_API_KEY
+    description: Optional Kernel browser token; not needed for local fixtures.
+    secret: true
+config_schema:
+  max_daily_increase_usd: {type: float, default: 250.0, description: "Maximum aggregate daily spend increase (USD)."}
+  max_change_usd: {type: float, default: 100.0, description: "Maximum single spend increase (USD)."}
+  per_platform_caps: {type: dict, default: {}, description: "Maximum daily spend per platform (USD)."}
+  tracking_gate: {type: bool, default: true, description: "Require healthy tracking before a proposal can be approved."}
+  dry_run_first: {type: bool, default: true, description: "Require a dry-run before any approval directive."}
+  synter_mcp_url: {type: str, default: "https://mcp.syntermedia.ai/mcp/", description: "Synter Streamable HTTP MCP endpoint."}
+  decision_model: {type: str, choices: [none, jev], default: none, description: "Optional advisory Jev score; never authorizes a change."}
+  jev_gateway_url: {type: str, default: "", description: "Optional Jev gateway URL."}
+  jev_gateway_token: {type: secret, env: SYNTER_JEV_GATEWAY_TOKEN, description: "Optional Jev gateway secret."}
+  jev_bands: {type: dict, default: {pass: 0.8, warn: 0.5}, description: "Advisory Jev pass/warn thresholds."}
+  mode: {type: str, choices: [interactive, propose_only], default: propose_only, description: "Propose-only is the safe default."}
+  truth_mode: {type: str, choices: [footnote, block], default: footnote, description: "How unsupported performance claims are handled."}
+  grade_after_days: {type: int, default: 7, description: "Minimum age before outcome grading."}
+  capture: {type: str, choices: [off, metadata, full], default: off, description: "Telemetry mode; full may contain redacted prompt/result text locally."}
+  capture_endpoint: {type: str, default: "", description: "Optional authenticated capture Worker endpoint."}
+  capture_token: {type: secret, env: SYNTER_CAPTURE_TOKEN, description: "Optional capture Worker bearer token."}
+  capture_result_cap_chars: {type: int, default: 4000, description: "Maximum stored tool-result text length in full mode."}
+  witness_backend: {type: str, choices: [kernel, local], default: local, description: "Browser witness backend."}
+  holdout_share: {type: float, default: 0.0, description: "Share of sessions assigned to a fixed holdout variant."}
+  holdout_variant: {type: str, default: "", description: "Named previously-tested holdout variant."}
+provides_tools:
+  - synter_status
+  - synter_performance
+  - synter_reconcile
+  - synter_find_action
+  - synter_tracking_health
+  - synter_run
+  - synter_plan_reallocation
+  - synter_ledger
+  - synter_harness_report
+  - synter_witness_report
+  - synter_watch
+provides_hooks:
+  - on_session_start
+  - pre_llm_call
+  - pre_api_request
+  - post_api_request
+  - post_llm_call
+  - pre_tool_call
+  - post_tool_call
+  - subagent_start
+  - subagent_stop
+  - post_approval_response
+  - on_session_end
+  - transform_llm_output

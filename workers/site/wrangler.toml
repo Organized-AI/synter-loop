@@ -1,0 +1,16 @@
+name = "synter-loop-site"
+main = "src/index.js"
+compatibility_date = "2025-02-14"
+workers_dev = true
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "404-page"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "synter-loop-media"
+
+[vars]
+CAPTURE_FEED_URL = "http://127.0.0.1:8787/live"

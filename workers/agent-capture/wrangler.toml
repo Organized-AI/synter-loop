@@ -1,0 +1,18 @@
+name = "synter-loop-agent-capture"
+main = "src/index.js"
+compatibility_date = "2025-02-14"
+workers_dev = true
+
+[[r2_buckets]]
+binding = "EVENTS"
+bucket_name = "synter-loop-events"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "synter-loop-index"
+database_id = "00000000-0000-0000-0000-000000000000"
+
+[vars]
+SGTM_FORWARD = "false"
+ALLOWED_ORIGIN = ""
+MAX_BATCH_EVENTS = "100"

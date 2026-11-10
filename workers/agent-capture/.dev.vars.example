@@ -1,0 +1,7 @@
+# Copy to .dev.vars locally; do not commit real values.
+CAPTURE_TOKEN=replace-with-local-random-token
+SGTM_FORWARD=false
+# If enabling relay, use HTTPS only. Payloads are metadata-only.
+# SGTM_ENDPOINT=https://your-sgtm-endpoint.example/collect
+# SGTM_TOKEN=optional-secret
+ALLOWED_ORIGIN=http://127.0.0.1:8788

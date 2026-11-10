@@ -1,0 +1,2 @@
+# Local development; do not commit this file.
+ALLOW_INSECURE_LOCAL_FEED=true

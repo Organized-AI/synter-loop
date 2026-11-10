@@ -1,0 +1,13 @@
+[project]
+name = "synter-loop"
+version = "0.1.0"
+description = "Local-first evidence-gated Synter ad-operations Hermes plugin"
+requires-python = ">=3.11,<3.15"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=8.3,<9", "PyYAML>=6,<7"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
