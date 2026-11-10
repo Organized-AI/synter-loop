@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Organized-AI/synter-loop/blob/main/schema/events.v1.json",
+  "title": "synter-loop capture event, v1",
+  "description": "One record per agent milestone. Everything a metadata-only consumer (sGTM, GA4, the /live feed) may see lives outside `content`. Anything only `capture: full` may record (prompts, completions, tool arguments and results) lives under `content` and nowhere else. Phase 0 defines the envelope and the event names; later phases extend `data` additively and never change an existing field's meaning.",
+  "type": "object",
+  "required": ["schema", "event_id", "event", "ts", "run_id", "session_id", "capture_mode", "harness_variant", "data"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "synter-loop.events.v1" },
+    "event_id": {
+      "$ref": "#/$defs/id",
+      "description": "Deterministic and unique: derived from the turn id or tool-call id plus the milestone, e.g. `<turn_id>:turn_start` or `<tool_call_id>:tool_call`, so a retried relay POST is recognized as a duplicate."
+    },
+    "event": { "$ref": "#/$defs/event_name" },
+    "ts": { "type": "string", "format": "date-time" },
+    "seq": { "type": "integer", "minimum": 0, "description": "Emission order within the run." },
+    "run_id": { "$ref": "#/$defs/id", "description": "One Hermes run (a run_conversation call chain for one session). The R2 prefix and the D1 key." },
+    "session_id": { "$ref": "#/$defs/id" },
+    "turn_id": {
+      "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }],
+      "description": "User-turn identity. Null only for session-scoped events."
+    },
+    "parent_session_id": { "$ref": "#/$defs/id" },
+    "capture_mode": { "enum": ["metadata", "full"] },
+    "harness_variant": { "$ref": "#/$defs/harness_variant" },
+    "data": { "$ref": "#/$defs/metadata" },
+    "content": {
+      "type": "object",
+      "description": "Full-capture payload: prompts, the system prompt once per session then its hash, completions, tool arguments and results (capped and redacted). Never forwarded to sGTM or the live feed.",
+      "properties": {
+        "tool_call": { "$ref": "#/$defs/openai_tool_call_full" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "capture_mode": { "const": "metadata" } } },
+      "then": { "not": { "required": ["content"] } }
+    },
+    {
+      "if": { "properties": { "event": { "const": "agent_tool_call" } } },
+      "then": {
+        "required": ["turn_id"],
+        "properties": {
+          "turn_id": { "$ref": "#/$defs/id" },
+          "data": { "required": ["tool_call", "status"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event": { "enum": ["agent_turn_start", "agent_model_call", "agent_turn_complete", "agent_gate_decision", "agent_approval"] } } },
+      "then": { "required": ["turn_id"], "properties": { "turn_id": { "$ref": "#/$defs/id" } } }
+    },
+    {
+      "if": { "properties": { "event": { "const": "agent_model_call" } } },
+      "then": { "properties": { "data": { "required": ["model"] } } }
+    },
+    {
+      "if": { "properties": { "event": { "const": "agent_gate_decision" } } },
+      "then": { "properties": { "data": { "required": ["decision"] } } }
+    }
+  ],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9._:-]{1,200}$" },
+    "event_name": {
+      "enum": [
+        "agent_session_start",
+        "agent_turn_start",
+        "agent_model_call",
+        "agent_tool_call",
+        "agent_subagent",
+        "agent_gate_decision",
+        "agent_approval",
+        "agent_turn_complete",
+        "agent_outcome"
+      ]
+    },
+    "harness_variant": {
+      "type": "object",
+      "required": ["id", "plugin_version"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "description": "Stable hash of the fields below." },
+        "label": { "type": "string", "maxLength": 64 },
+        "prompt_hash": { "type": "string", "maxLength": 128 },
+        "skill_versions": { "type": "object", "additionalProperties": { "type": "string", "maxLength": 64 } },
+        "model": { "type": "string", "maxLength": 128 },
+        "plugin_version": { "type": "string", "maxLength": 32 },
+        "jev_map_version": { "type": "string", "maxLength": 64 },
+        "holdout": { "type": "boolean" }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "input_tokens": { "type": "integer", "minimum": 0 },
+        "output_tokens": { "type": "integer", "minimum": 0 },
+        "cache_read_tokens": { "type": "integer", "minimum": 0 },
+        "cache_write_tokens": { "type": "integer", "minimum": 0 },
+        "reasoning_tokens": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "openai_tool_call_meta": {
+      "description": "OpenAI tool-call shape without the arguments string (arguments are content).",
+      "type": "object",
+      "required": ["id", "type", "function"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "type": { "const": "function" },
+        "function": {
+          "type": "object",
+          "required": ["name"],
+          "properties": { "name": { "type": "string", "minLength": 1, "maxLength": 128 } },
+          "additionalProperties": false
+        }
+      }
+    },
+    "openai_tool_call_full": {
+      "description": "OpenAI tool-call shape: function.arguments is a JSON-encoded string, not an object.",
+      "type": "object",
+      "required": ["id", "type", "function"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "type": { "const": "function" },
+        "function": {
+          "type": "object",
+          "required": ["name", "arguments"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+            "arguments": { "type": "string" }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata only. Content-bearing keys are refused here; they belong under `content`.",
+      "propertyNames": {
+        "not": {
+          "enum": [
+            "prompt", "user_message", "user_prompt", "system_prompt", "assistant_response", "completion",
+            "messages", "conversation_history", "arguments", "args", "result", "tool_result",
+            "request", "response", "content"
+          ]
+        }
+      },
+      "properties": {
+        "model": { "type": "string", "maxLength": 128 },
+        "provider": { "type": "string", "maxLength": 64 },
+        "platform": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "maxLength": 32 },
+        "latency_ms": { "type": "number", "minimum": 0 },
+        "usage": { "$ref": "#/$defs/usage" },
+        "cost_usd": { "type": "number", "minimum": 0 },
+        "credits": { "type": "number", "minimum": 0 },
+        "tool_call": { "$ref": "#/$defs/openai_tool_call_meta" },
+        "decision": { "enum": ["pass", "approval", "block", "proposal"] },
+        "reason": { "type": "string", "maxLength": 500 },
+        "choice": { "type": "string", "maxLength": 32 },
+        "grade": { "type": "number" },
+        "proposal_id": { "type": "string", "maxLength": 128 }
+      }
+    }
+  }
+}

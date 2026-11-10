@@ -13,3 +13,8 @@ node_modules/
 *.outbox.jsonl
 captures/
 .DS_Store
+# video/ render outputs (the mp4 and poster live in R2 synter-loop-media)
+video/*.mp4
+video/poster.jpg
+video/list.txt
+video/render.log

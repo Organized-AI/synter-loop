@@ -1,0 +1,32 @@
+// agent-capture: receives synter-loop run events, stores raw JSONL in R2 (one object per turn),
+// indexes runs in D1, relays metadata-only events to sGTM, and serves the /live feed.
+// Secret (wrangler secret put CAPTURE_TOKEN -c capture/wrangler.jsonc): CAPTURE_TOKEN.
+// compatibility_date trails today: vitest-pool-workers 0.22.0 bundles workerd 1.20260815.
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "agent-capture",
+  "account_id": "691fe25d377abac03627d6a88d3eeac9",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-15",
+  "workers_dev": true,
+  "observability": { "enabled": true, "logs": { "enabled": true, "head_sampling_rate": 1, "invocation_logs": true } },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "agent_runs",
+      "database_id": "11f00ae9-c452-422e-97a4-91e23121b163",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "RUNS", "bucket_name": "agent-runs" }],
+  "vars": {
+    "SGTM_ENDPOINT": "https://arxmgigt.usv.stape.io",
+    // Path the sGTM client claims. Phase 9 documents the client; until then the relay is off (ADR 0002).
+    "SGTM_PATH": "/agent-events",
+    "SGTM_FORWARD": "off",
+    // The feed is metadata only. "off" requires the capture bearer token to read it.
+    "FEED_PUBLIC": "on",
+    "MAX_BODY_BYTES": "1048576",
+    "MAX_EVENTS": "500"
+  }
+}

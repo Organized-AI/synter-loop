@@ -1,0 +1,212 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Inter;src:url(../site/public/assets/fonts/inter-latin-wght-normal.woff2)format("woff2");font-weight:100 900}
+@font-face{font-family:Plex;src:url(../site/public/assets/fonts/ibm-plex-mono-latin-400-normal.woff2)format("woff2");font-weight:100 900}
+@font-face{font-family:Grotesk;src:url(../site/public/assets/fonts/space-grotesk-latin-500-normal.woff2)format("woff2");font-weight:100 900}
+:root{--carbon:#0b0e12;--paper:#f4f4f0;--lime:#9cff5a;--white:#e8ebee;--line:#344048;--panel:#10171b;--active:#203028;--muted:#a6b5b6;--warn:#f5b942;--bad:#ff6b6b}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;background:var(--carbon);overflow:hidden}
+body{font:400 30px/1.4 Inter,Arial,sans-serif;color:var(--white);-webkit-font-smoothing:antialiased}
+.mono{font-family:Plex,monospace}
+.eyebrow{font:400 22px/1.6 Plex,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--lime)}
+h1,h2{font-weight:400;letter-spacing:-.045em;line-height:1.04;color:var(--paper)}
+h1{font-size:104px}h2{font-size:72px}
+.chrome{position:absolute;inset:0;pointer-events:none}
+.brand{position:absolute;left:96px;top:64px;font:500 34px/1 Grotesk,sans-serif;letter-spacing:1.6px;display:flex;align-items:center;gap:14px;color:var(--paper)}
+.brand i{width:22px;height:22px;border:5px solid var(--lime);border-radius:50%}
+.built{position:absolute;right:96px;top:70px;font:400 20px/1 Plex,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.built b{color:var(--lime);font-weight:400}
+.rule{position:absolute;left:96px;right:96px;top:130px;height:1px;background:var(--line)}
+.foot{position:absolute;left:96px;right:96px;bottom:52px;display:flex;justify-content:space-between;align-items:center;font:400 20px/1 Plex,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.bar{position:absolute;left:96px;right:96px;bottom:98px;height:2px;background:var(--line)}
+.bar span{display:block;height:100%;background:var(--lime);width:0}
+.cap{position:absolute;left:96px;right:420px;bottom:132px;font:500 40px/1.3 Inter,Arial,sans-serif;letter-spacing:-.012em;color:var(--paper)}
+.cap b{font-weight:500;color:var(--lime)}
+.scene{position:absolute;inset:0;padding:184px 96px 0;display:none}
+.scene.on{display:block}
+.scene>.eyebrow:first-child::after{content:" //";color:var(--muted)}
+.sub{font-size:38px;color:var(--muted);max-width:1300px;margin-top:40px;letter-spacing:-.01em}
+.tag{display:inline-block;font:400 18px/1 Plex,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--warn);border:1px solid var(--warn);padding:8px 12px;margin-left:16px;vertical-align:middle}
+.pipe{display:flex;margin-top:56px;border:1px solid var(--line)}
+.pipe div{flex:1;padding:34px 28px;border-right:1px solid var(--line);font-size:34px;font-weight:500;color:var(--muted)}
+.pipe div:last-child{border-right:0}
+.pipe div small{display:block;font:400 20px/1.6 Plex,monospace;letter-spacing:.08em;margin-bottom:10px}
+.pipe div.lit{background:var(--active);box-shadow:inset 0 4px var(--lime);color:var(--paper)}
+.pipe div.lit small{color:var(--lime)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:36px 44px;margin-top:48px;display:flex;justify-content:space-between;align-items:center}
+.card .mono{font-size:30px;color:var(--paper)}
+.chip{font:400 22px/1 Plex,monospace;letter-spacing:.08em;text-transform:uppercase;padding:12px 16px;border:1px solid currentColor}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:48px}
+.browser{background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden;height:420px}
+.browser .url{padding:22px 28px;border-bottom:1px solid var(--line);font:400 24px Plex,monospace;color:var(--muted);display:flex;gap:12px;align-items:center}
+.browser .url i{width:14px;height:14px;border-radius:50%;background:var(--line)}
+.browser .pg{padding:40px}
+.browser .blk{height:28px;background:#1a242a;margin:18px 0;border-radius:4px}
+.browser .btn{width:300px;height:72px;background:var(--lime);margin-top:40px}
+.rows div{display:flex;justify-content:space-between;align-items:center;padding:20px 4px;border-bottom:1px solid var(--line);font-size:34px}
+.ok{color:var(--lime)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.bars{margin-top:56px;display:grid;gap:30px}
+.bars .r{display:grid;grid-template-columns:360px 1fr 140px;align-items:center;gap:32px;font-size:34px}
+.bars .t{height:56px;background:#1a242a}
+.bars .f{height:100%;width:0;background:var(--lime)}
+.note{margin-top:48px;font:400 28px Plex,monospace;color:var(--paper);background:var(--panel);border:1px solid var(--line);padding:26px 32px;border-radius:4px}
+.big{font-size:220px;letter-spacing:-.05em;line-height:1;color:var(--lime);font-weight:400}
+.meter{position:relative;height:72px;margin-top:110px;display:flex}
+.meter div{height:100%}
+.needle{position:absolute;top:-36px;width:4px;height:144px;background:var(--paper)}
+.needle b{position:absolute;top:-58px;left:-150px;width:304px;text-align:center;white-space:nowrap;font:400 30px Plex,monospace;color:var(--paper)}
+.scale{position:relative;height:40px;margin-top:24px;font:400 22px Plex,monospace;color:var(--muted);letter-spacing:.06em}
+.scale span{position:absolute;top:0;white-space:nowrap}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);margin-top:56px;border:1px solid var(--line)}
+.tiles div{padding:44px 36px;border-right:1px solid var(--line)}
+.tiles div:last-child{border-right:0}
+.tiles small{display:block;font:400 20px/1.5 Plex,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;min-height:60px}
+.tiles b{font-weight:400;font-size:84px;letter-spacing:-.04em;color:var(--paper)}
+.install{display:inline-flex;margin-top:56px;border:1px solid var(--line);background:var(--panel)}
+.install span{padding:30px 40px;font:400 36px Plex,monospace;color:var(--lime)}
+.install em{font-style:normal;padding:30px 36px;border-left:1px solid var(--line);font-weight:500;color:var(--paper)}
+.cta{display:inline-flex;gap:64px;background:var(--lime);color:var(--carbon);padding:26px 36px;font-weight:500;font-size:32px;margin-top:40px}
+</style></head><body>
+<div class="chrome">
+  <div class="brand"><i></i>synter-loop</div>
+  <div class="built">Hermes plugin · <b>built on Synter</b></div>
+  <div class="rule"></div>
+  <div class="bar"><span id="prog"></span></div>
+  <div class="cap" id="cap"></div>
+  <div class="foot"><span id="step">synter-loop</span><span>synter-loop · built on Synter</span></div>
+</div>
+<section class="scene" data-label="Overview">
+  <p class="eyebrow a" data-in=".2">Hermes Agent Plugin Hackathon · How it works</p>
+  <h1 class="a" data-in=".5" style="margin-top:36px">A closed loop for<br>agent ad spend.</h1>
+</section>
+<section class="scene" data-label="The problem">
+  <p class="eyebrow a" data-in=".2">The problem</p>
+  <h1 class="a" data-in=".4" style="margin-top:36px">Agents can now move budgets<br>on 43 ad platforms.</h1>
+  <p class="sub a" data-in="1.6" style="color:var(--paper)">Who checks the caps?</p>
+  <p class="sub a" data-in="2.2" style="color:var(--paper);margin-top:12px">Who checks the tracking?</p>
+  <p class="sub a" data-in="2.8" style="color:var(--paper);margin-top:12px">Who checks the numbers<span class="ok">?</span></p>
+</section>
+<section class="scene" data-label="01 / 05 · Spend Guard">
+  <p class="eyebrow a" data-in=".2">01 · Spend Guard decides</p>
+  <h2 class="a" data-in=".4" style="margin-top:28px">Every Synter write passes a gate.</h2>
+  <div class="pipe a" data-in=".9">
+    <div data-lit="1.6"><small>Step 1</small>Caps</div>
+    <div data-lit="2.4"><small>Step 2</small>Dry run</div>
+    <div data-lit="3.2"><small>Step 3</small>Tracking</div>
+    <div data-lit="4.0"><small>Step 4</small>Jev score</div>
+    <div data-lit="4.8"><small>Step 5</small>You approve</div>
+  </div>
+  <div class="card a" data-in="5.2"><span class="mono">update_campaign_budget · $120 → $180 / day</span><span class="chip warn">Awaiting your approval</span></div>
+</section>
+<section class="scene" data-label="02 / 05 · Tag Witness">
+  <p class="eyebrow a" data-in=".2">02 · Tag Witness verifies tracking</p>
+  <h2 class="a" data-in=".4" style="margin-top:28px">It checks the tags in a real browser.</h2>
+  <div class="cols">
+    <div class="browser a" data-in=".8"><div class="url"><i></i><i></i><i></i>&nbsp;example-store.com/checkout</div><div class="pg"><div class="blk" style="width:70%"></div><div class="blk" style="width:90%"></div><div class="blk" style="width:55%"></div><div class="blk" style="width:80%"></div><div class="btn"></div></div></div>
+    <div class="rows">
+      <div class="a" data-in="1.6"><span>dataLayer · purchase</span><span class="chip ok">Pushed</span></div>
+      <div class="a" data-in="2.3"><span>Google Tag Manager</span><span class="chip ok">Fired</span></div>
+      <div class="a" data-in="3.0"><span>GA4 collect</span><span class="chip ok">Fired</span></div>
+      <div class="a" data-in="3.7"><span>Meta Pixel</span><span class="chip ok">Fired</span></div>
+      <div class="a" data-in="4.6"><span>Google Ads conversion</span><span class="chip bad">Missing</span></div>
+    </div>
+  </div>
+</section>
+<section class="scene" data-label="03 / 05 · Truth Layer">
+  <p class="eyebrow a" data-in=".2">03 · Truth Layer checks the numbers</p>
+  <h2 class="a" data-in=".4" style="margin-top:28px">Platform claims sit next to the truth. <span class="tag">Illustrative</span></h2>
+  <div class="bars">
+    <div class="r a" data-in=".9"><span>Meta claims</span><div class="t"><div class="f" data-w="1.0" data-at="1.1"></div></div><span class="mono">120</span></div>
+    <div class="r a" data-in="1.4"><span>CAPI / sGTM</span><div class="t"><div class="f" data-w=".70" data-at="1.6"></div></div><span class="mono">84</span></div>
+    <div class="r a" data-in="1.9"><span>GA4</span><div class="t"><div class="f" data-w=".59" data-at="2.1"></div></div><span class="mono">71</span></div>
+  </div>
+  <p class="note a" data-in="4.4">Meta claims 120 · GA4 71 · CAPI 84 · run 7f3a2c</p>
+</section>
+<section class="scene" data-label="04 / 05 · Agent ROAS">
+  <p class="eyebrow a" data-in=".2">04 · Agent ROAS grades the decision</p>
+  <h2 class="a" data-in=".4" style="margin-top:28px">Seven days later, did it work? <span class="tag">Illustrative</span></h2>
+  <div class="cols" style="align-items:end">
+    <div class="a" data-in="1.0"><div class="big"><span data-count="12" data-at="1.2" data-dur="1.6" data-pre="+" data-suf="%">+0%</span></div><p class="sub" style="margin-top:12px">incremental lift on the changed campaign</p></div>
+    <div class="rows">
+      <div class="a" data-in="1.6"><span>Measured with</span><span class="mono" style="font-size:28px">measure_incrementality</span></div>
+      <div class="a" data-in="2.1"><span>Attribution check</span><span class="mono" style="font-size:28px">get_attribution</span></div>
+      <div class="a" data-in="2.8"><span>Grade</span><span class="chip ok">Keep</span></div>
+    </div>
+  </div>
+</section>
+<section class="scene" data-label="05 / 05 · Jev">
+  <p class="eyebrow a" data-in=".2">05 · Jev learns from the grades</p>
+  <h2 class="a" data-in=".4" style="margin-top:28px">Jev scores. People approve.</h2>
+  <div class="meter a" data-in=".9">
+    <div style="width:50%;background:#3a1c1f"></div><div style="width:30%;background:#3a3020"></div><div style="width:20%;background:#24402a"></div>
+    <div class="needle" id="needle"><b id="needleval">0.00</b></div>
+  </div>
+  <div class="scale a" data-in=".9"><span style="left:0">0.00 · block</span><span style="left:50%">0.50 · warn</span><span style="left:80%">0.80 · pass</span><span style="right:0">1.00</span></div>
+</section>
+<section class="scene" data-label="Measurement first">
+  <p class="eyebrow a" data-in=".2">Agent runtime capture · Agent P&amp;L</p>
+  <h2 class="a" data-in=".4" style="margin-top:28px">The agent gets measured<br>like an ad account. <span class="tag">Illustrative</span></h2>
+  <div class="tiles">
+    <div class="a" data-in="1.0"><small>Tool calls captured</small><b data-count="1284" data-at="1.2" data-dur="1.4">0</b></div>
+    <div class="a" data-in="1.3"><small>Tokens</small><b data-count="2.1" data-at="1.5" data-dur="1.4" data-dec="1" data-suf="M">0</b></div>
+    <div class="a" data-in="1.6"><small>Cost per approved change</small><b data-count="0.38" data-at="1.8" data-dur="1.4" data-dec="2" data-pre="$">$0</b></div>
+    <div class="a" data-in="1.9"><small>Return on token spend</small><b data-count="14.2" data-at="2.1" data-dur="1.4" data-dec="1" data-suf="×">0</b></div>
+  </div>
+</section>
+<section class="scene" data-label="The loop">
+  <p class="eyebrow a" data-in=".2">The loop</p>
+  <svg width="1728" height="660" viewBox="0 0 1728 660" style="margin-top:10px">
+    <circle cx="864" cy="330" r="250" fill="none" stroke="#344048" stroke-width="2" stroke-dasharray="6 10"/>
+    <circle id="arc" cx="864" cy="330" r="250" fill="none" stroke="#9cff5a" stroke-width="5" stroke-linecap="round" transform="rotate(-90 864 330)" stroke-dasharray="1571" stroke-dashoffset="1571"/>
+    <circle cx="864" cy="330" r="120" fill="#10171b" stroke="#344048" stroke-width="2"/>
+    <text x="864" y="322" text-anchor="middle" fill="#f4f4f0" font-family="Inter" font-size="40" font-weight="500">Synter MCP</text>
+    <text x="864" y="362" text-anchor="middle" fill="#a6b5b6" font-family="Plex" font-size="20">43 ad platforms</text>
+    <g id="nodes" font-family="Inter" font-size="26" font-weight="500" text-anchor="middle"></g>
+  </svg>
+</section>
+<section class="scene" data-label="Install">
+  <p class="eyebrow a" data-in=".2">Install</p>
+  <h1 class="a" data-in=".4" style="margin-top:36px">synter-loop</h1>
+  <div class="install a" data-in="1.0"><span>hermes plugins install Organized-AI/synter-loop</span><em>Copy</em></div>
+  <div class="a" data-in="2.0"><span class="cta">synter-loop.jordan-691.workers.dev <span>↗</span></span></div>
+</section>
+<script>
+const scenes=[...document.querySelectorAll('.scene')];
+const durs=[6.6,6.5,8.7,8.3,8.2,5.5,7.3,8.6,6.2,5.5];
+const caps=['Your agent can move ad spend on 43 platforms. <b>synter-loop checks every change first.</b>',
+'Before a budget moves, someone should check <b>the caps, the tracking and the numbers.</b>',
+'Every Synter write goes through a gate: caps, dry run, tracking, Jev score, <b>then your approval.</b>',
+'Tag Witness records which tags actually fired. <b>Broken tracking blocks the change.</b>',
+'Platform claims sit next to GA4 and server-side numbers. <b>Mismatches get a footnote.</b>',
+'A week later, Agent ROAS <b>measures the lift and grades the decision.</b>',
+'Grades go back to Jev, so the next score is better informed. <b>Jev scores. You approve.</b>',
+'Every prompt, tool call and token, <b>down to cost per approved change.</b>',
+'Decide, verify, check, grade, learn. <b>One closed loop.</b>',
+'synter-loop. <b>A Hermes plugin, built on Synter.</b>'];
+const total=durs.reduce((a,b)=>a+b,0);
+const ease=x=>x<0?0:x>1?1:1-Math.pow(1-x,3);
+const names=['Spend Guard','Tag Witness','Truth Layer','Agent ROAS','Jev'];
+const g=document.getElementById('nodes');
+names.forEach((n,i)=>{const a=-Math.PI/2+i*2*Math.PI/5,x=864+250*Math.cos(a),y=330+250*Math.sin(a);
+  g.insertAdjacentHTML('beforeend',`<g data-node="${i}"><circle cx="${x}" cy="${y}" r="74" fill="#10171b" stroke="#344048" stroke-width="2"/>${n.split(' ').map((w,j,arr)=>`<text x="${x}" y="${y+10+(j-(arr.length-1)/2)*30}" fill="#e8ebee">${w}</text>`).join('')}</g>`)});
+window.DURS=durs;
+window.render=(si,t)=>{
+  scenes.forEach((s,i)=>s.classList.toggle('on',i===si));
+  const s=scenes[si],d=durs[si];
+  const start=durs.slice(0,si).reduce((a,b)=>a+b,0);
+  document.getElementById('prog').style.width=((start+t)/total*100)+'%';
+  document.getElementById('step').textContent=s.dataset.label;
+  s.style.opacity=Math.min(ease(t/.4),ease((d-t)/.4));
+  const cap=document.getElementById('cap');cap.innerHTML=caps[si];cap.style.opacity=Math.min(ease((t-.4)/.5),ease((d-t)/.4));cap.style.transform=`translateY(${(1-ease((t-.4)/.5))*12}px)`;
+  s.querySelectorAll('.a').forEach(e=>{const k=ease((t-(+e.dataset.in))/.6);e.style.opacity=k;e.style.transform=`translateY(${(1-k)*24}px)`});
+  s.querySelectorAll('[data-lit]').forEach(e=>e.classList.toggle('lit',t>=+e.dataset.lit));
+  s.querySelectorAll('.f').forEach(e=>e.style.width=(ease((t-(+e.dataset.at))/1.2)*(+e.dataset.w)*100)+'%');
+  s.querySelectorAll('[data-count]').forEach(e=>{const k=ease((t-(+e.dataset.at))/(+e.dataset.dur));const v=k*(+e.dataset.count);const dec=+(e.dataset.dec||0);
+    e.textContent=(e.dataset.pre||'')+(dec?v.toFixed(dec):Math.round(v).toLocaleString('en-US'))+(e.dataset.suf||'')});
+  if(si===6){const k=ease((t-1.2)/1.8),v=.86*k;document.getElementById('needle').style.left=`calc(${v*100}% - 2px)`;document.getElementById('needleval').textContent=v.toFixed(2)+(k>=.99?' · pass':'');}
+  if(si===8){const k=Math.min(1,Math.max(0,(t-.6)/3.4));document.getElementById('arc').setAttribute('stroke-dashoffset',1571*(1-k));
+    document.querySelectorAll('[data-node]').forEach(n=>{const i=+n.dataset.node,lit=k>=i/5+.02;n.querySelector('circle').setAttribute('stroke',lit?'#9cff5a':'#344048');n.querySelector('circle').setAttribute('fill',lit?'#203028':'#10171b')});}
+};
+</script>
+</body></html>
