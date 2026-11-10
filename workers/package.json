@@ -1,0 +1,12 @@
+{
+  "name": "synter-loop-workers",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "dev:capture": "wrangler dev --config agent-capture/wrangler.toml --port 8787",
+    "dev:site": "wrangler dev --config site/wrangler.toml --port 8788",
+    "deploy:capture": "wrangler deploy --config agent-capture/wrangler.toml",
+    "deploy:site": "wrangler deploy --config site/wrangler.toml"
+  }
+}
